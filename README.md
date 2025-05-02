@@ -3,8 +3,6 @@
 **Hygea** is an extensible, privacy-first health companion platform designed to help individuals track, understand, and take control of their health data.
 Built with a modular architecture, Hygea starts with a health journaling MVP and grows toward a complete personal health ecosystem.
 
----
-
 
 ## 🚀 Features (Alpha Version)
 
@@ -16,8 +14,6 @@ Built with a modular architecture, Hygea starts with a health journaling MVP and
 - 📊 **Observability stack** (Prometheus + Grafana)
 - 🐇 Ready for **asynchronous event-driven architecture** with RabbitMQ
 
-
----
 
 ## 🏗️ Tech Stack
 
@@ -31,7 +27,6 @@ Built with a modular architecture, Hygea starts with a health journaling MVP and
 | Monitoring  | Prometheus + Grafana           |
 | Infra       | Kubernetes (k3d) + Helm + Terraform |
 
----
 
 ## 📦 Helm Charts Structure
 
@@ -41,7 +36,6 @@ Built with a modular architecture, Hygea starts with a health journaling MVP and
 | `hygea-stack`    | Database, RabbitMQ cluster, Keycloak         |
 | `hygea-apps`     | Application deployments (API, frontend, etc.)|
 
----
 
 
 ## 📚 Getting Started (Dev)
