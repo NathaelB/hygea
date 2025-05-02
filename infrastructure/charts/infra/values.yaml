@@ -1,0 +1,4 @@
+rabbitmq-cluster-operator:
+  installCRDs: true
+  metrics:
+    enabled: true

@@ -1,0 +1,45 @@
+rabbitmq:
+  replicas: 3
+
+
+# postgresql:
+#   auth:
+#     postgresPassword: postgres
+#   metrics:
+#     enabled: true
+#   replication:
+#     enabled: true
+#     readReplicas: 2
+#   architecture: replication
+
+
+keycloak-db:
+  replicaCount: 1
+  bootstrap:
+    initdb:
+      database: keycloak
+      owner: keycloak
+      secret:
+        name: keycloak-db-password
+
+
+keycloak:
+  replicaCount: 2
+  auth:
+    adminUser: super
+    adminPassword: super
+  #production: true
+  postgresql:
+    enabled: false
+
+  externalDatabase:
+    existingSecret: hygea-stack-keycloak-db-app
+    existingSecretHostKey: host
+    existingSecretPortKey: port
+    existingSecretDatabaseKey: dbname
+    existingSecretUserKey: user
+    existingSecretPasswordKey: password
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true

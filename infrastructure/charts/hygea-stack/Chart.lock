@@ -1,0 +1,9 @@
+dependencies:
+- name: keycloak
+  repository: https://charts.bitnami.com/bitnami
+  version: 24.6.3
+- name: cluster
+  repository: https://cloudnative-pg.github.io/charts
+  version: 0.2.0
+digest: sha256:32f4a5e9b1f90c6b2b5d59a867e45adc4edb8979fb17b2906e5d3d4e04fd1154
+generated: "2025-05-02T16:27:51.747605+02:00"

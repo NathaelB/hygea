@@ -1,0 +1,14 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+    name: {{ include "hygea-stack.fullname" . }}-rabbitmq
+    namespace: {{ .Release.Namespace }}
+    labels:
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: {{ include "hygea-stack.fullname" . }}-rabbitmq
+        app.kubernetes.io/component: rabbitmq
+        app.kubernetes.io/part-of: {{ include "hygea-stack.fullname" . }}
+
+spec:
+    replicas: {{ .Values.rabbitmq.replicas }}

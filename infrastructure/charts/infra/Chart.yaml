@@ -1,0 +1,21 @@
+apiVersion: v2
+name: infra
+description: A Helm chart for Kubernetes
+
+
+type: application
+
+version: 0.1.0
+appVersion: "1.16.0"
+
+
+dependencies:
+  - name: rabbitmq-cluster-operator
+    version: 4.4.8
+    repository: https://charts.bitnami.com/bitnami
+  - name: keda
+    version: 2.17.0  # Vérifie la version actuelle sur https://artifacthub.io/packages/helm/kedacore/keda
+    repository: https://kedacore.github.io/charts
+  - name: cloudnative-pg
+    version: 0.19.1  # Check for the latest version on https://artifacthub.io/packages/helm/cloudnative-pg/cloudnative-pg
+    repository: https://cloudnative-pg.github.io/charts

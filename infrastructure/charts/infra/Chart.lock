@@ -1,0 +1,12 @@
+dependencies:
+- name: rabbitmq-cluster-operator
+  repository: https://charts.bitnami.com/bitnami
+  version: 4.4.8
+- name: keda
+  repository: https://kedacore.github.io/charts
+  version: 2.17.0
+- name: cloudnative-pg
+  repository: https://cloudnative-pg.github.io/charts
+  version: 0.19.1
+digest: sha256:55acc3bc93e340473d3b13b901c430034d54ab9aa37b67d25a7481b6052b44d4
+generated: "2025-05-02T15:38:35.779075+02:00"
