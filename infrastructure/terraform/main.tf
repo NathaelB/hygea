@@ -88,7 +88,7 @@ resource "helm_release" "infrastructure" {
 }
 
 resource "helm_release" "hygea_stack" {
-  depends_on = [helm_release.monitoring, null_resource.grafana_port_forward]
+  depends_on = [helm_release.monitoring, null_resource.grafana_port_forward, helm_release.infrastructure]
   name       = "hygea-stack"
   chart      = "../charts/hygea-stack"
   repository = null
