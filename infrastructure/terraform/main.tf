@@ -122,3 +122,9 @@ resource "grafana_dashboard" "pg_monitoring" {
   config_json = file("${path.module}/dashboards/pg_dashboard.json")
   folder      = grafana_folder.hygea_folder.id
 }
+
+resource "grafana_dashboard" "keycloak_monitoring" {
+  depends_on = [null_resource.grafana_port_forward]
+  config_json = file("${path.module}/dashboards/keycloak_dashboard.json")
+  folder = grafana_folder.hygea_folder.id
+}
