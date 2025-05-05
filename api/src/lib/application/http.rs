@@ -8,6 +8,9 @@ use axum::{
 use snafu::ResultExt;
 use tower_http::cors::CorsLayer;
 use tracing::{info, info_span};
+use user::router::user_routes;
+
+pub mod user;
 
 use crate::application::state::AppState;
 
@@ -27,15 +30,13 @@ pub struct HttpServer {
 }
 
 impl HttpServer {
-    pub async fn new(config: HttpServerConfig) -> Result<Self, snafu::Whatever> {
+    pub async fn new(config: HttpServerConfig, app_state: AppState) -> Result<Self, snafu::Whatever> {
         let trace_layer = tower_http::trace::TraceLayer::new_for_http().make_span_with(
             |request: &axum::extract::Request| {
                 let uri: String = request.uri().to_string();
                 info_span!("http_request", method = ?request.method(), uri)
             },
         );
-
-        let app_state = AppState::new();
 
         let allowed_origins: Vec<HeaderValue> = vec![
             HeaderValue::from_static("http://localhost:3000"),
@@ -62,6 +63,7 @@ impl HttpServer {
             .allow_credentials(true);
 
         let router = Router::new()
+            .merge(user_routes())
             .layer(trace_layer)
             .layer(cors)
             .with_state(app_state);

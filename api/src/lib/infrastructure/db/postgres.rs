@@ -30,4 +30,8 @@ impl Postgres {
     pub fn get_pool(&self) -> PgPool {
         self.pool.clone()
     }
+
+    pub fn get_db(&self) -> DatabaseConnection {
+        self.db.clone()
+    }
 }

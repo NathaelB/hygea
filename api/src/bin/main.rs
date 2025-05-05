@@ -2,8 +2,7 @@ use std::sync::Arc;
 
 use clap::Parser;
 use hygea::{
-    application::http::{HttpServer, HttpServerConfig},
-    env::{AppEnv, Env},
+    application::{http::{HttpServer, HttpServerConfig}, state::{AppServer, AppState}}, domain::user::services::DefaultUserService, env::{AppEnv, Env}
 };
 use snafu::Whatever;
 
@@ -12,7 +11,9 @@ use tokio;
 fn init_logger(env: Arc<Env>) {
     match env.env {
         AppEnv::Development => {
-            tracing_subscriber::fmt::init();
+            tracing_subscriber::fmt()
+                .with_max_level(tracing::Level::INFO) // Définir explicitement le niveau
+                .init();
         }
         AppEnv::Production => {
             tracing_subscriber::fmt()
@@ -31,9 +32,14 @@ async fn main() -> Result<(), Whatever> {
     let env = Arc::new(Env::parse());
     init_logger(Arc::clone(&env));
 
-    let server_config = HttpServerConfig::new(env.port.clone());
+    let app_server = AppServer::new(env.clone()).await?;
 
-    let http_server = HttpServer::new(server_config).await?;
+    let user_service = DefaultUserService::new(app_server.user_repository.clone());
+
+    let app_state = AppState::new(user_service);
+
+    let server_config = HttpServerConfig::new(env.port.clone());
+    let http_server = HttpServer::new(server_config, app_state).await?;
 
     http_server.run().await?;
     Ok(())
