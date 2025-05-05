@@ -2,4 +2,6 @@
 
 pub mod prelude;
 
+pub mod checkin;
+pub mod symptom;
 pub mod user;

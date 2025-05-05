@@ -2,7 +2,12 @@ use std::sync::Arc;
 
 use clap::Parser;
 use hygea::{
-    application::{http::{HttpServer, HttpServerConfig}, state::{AppServer, AppState}}, domain::user::services::DefaultUserService, env::{AppEnv, Env}
+    application::{
+        http::{HttpServer, HttpServerConfig},
+        state::{AppServer, AppState},
+    },
+    domain::user::services::DefaultUserService,
+    env::{AppEnv, Env},
 };
 use snafu::Whatever;
 

@@ -43,3 +43,7 @@ keycloak:
     enabled: true
     serviceMonitor:
       enabled: true
+      labels:
+        release: monitoring
+        prometheus: k8s-prometheus
+        monitoring: "hygea-stack-keycloak"

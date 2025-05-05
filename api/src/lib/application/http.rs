@@ -10,6 +10,7 @@ use tower_http::cors::CorsLayer;
 use tracing::{info, info_span};
 use user::router::user_routes;
 
+pub mod checkin;
 pub mod user;
 
 use crate::application::state::AppState;
@@ -30,7 +31,10 @@ pub struct HttpServer {
 }
 
 impl HttpServer {
-    pub async fn new(config: HttpServerConfig, app_state: AppState) -> Result<Self, snafu::Whatever> {
+    pub async fn new(
+        config: HttpServerConfig,
+        app_state: AppState,
+    ) -> Result<Self, snafu::Whatever> {
         let trace_layer = tower_http::trace::TraceLayer::new_for_http().make_span_with(
             |request: &axum::extract::Request| {
                 let uri: String = request.uri().to_string();

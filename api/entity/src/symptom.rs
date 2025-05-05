@@ -7,36 +7,22 @@ pub struct Entity;
 
 impl EntityName for Entity {
     fn table_name(&self) -> &str {
-        "user"
+        "symptom"
     }
 }
 
-#[derive(Clone, Debug, PartialEq, DeriveModel, DeriveActiveModel)]
+#[derive(Clone, Debug, PartialEq, DeriveModel, DeriveActiveModel, Eq)]
 pub struct Model {
     pub id: Uuid,
-    pub oauth2_id: String,
-    pub name: String,
-    pub email: String,
-    pub gender: i32,
-    pub height_cm: f32,
-    pub weight_kg: f32,
-    pub diabetes_type: i32,
-    pub created_at: DateTime,
-    pub updated_at: DateTime,
+    pub checkin_id: Uuid,
+    pub label: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveColumn)]
 pub enum Column {
     Id,
-    Oauth2Id,
-    Name,
-    Email,
-    Gender,
-    HeightCm,
-    WeightKg,
-    DiabetesType,
-    CreatedAt,
-    UpdatedAt,
+    CheckinId,
+    Label,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DerivePrimaryKey)]
@@ -61,15 +47,8 @@ impl ColumnTrait for Column {
     fn def(&self) -> ColumnDef {
         match self {
             Self::Id => ColumnType::Uuid.def(),
-            Self::Oauth2Id => ColumnType::String(StringLen::None).def().unique(),
-            Self::Name => ColumnType::String(StringLen::None).def(),
-            Self::Email => ColumnType::String(StringLen::None).def(),
-            Self::Gender => ColumnType::Integer.def(),
-            Self::HeightCm => ColumnType::Float.def(),
-            Self::WeightKg => ColumnType::Float.def(),
-            Self::DiabetesType => ColumnType::Integer.def(),
-            Self::CreatedAt => ColumnType::DateTime.def(),
-            Self::UpdatedAt => ColumnType::DateTime.def(),
+            Self::CheckinId => ColumnType::Uuid.def(),
+            Self::Label => ColumnType::String(StringLen::None).def(),
         }
     }
 }
@@ -77,7 +56,10 @@ impl ColumnTrait for Column {
 impl RelationTrait for Relation {
     fn def(&self) -> RelationDef {
         match self {
-            Self::Checkin => Entity::has_many(super::checkin::Entity).into(),
+            Self::Checkin => Entity::belongs_to(super::checkin::Entity)
+                .from(Column::CheckinId)
+                .to(super::checkin::Column::Id)
+                .into(),
         }
     }
 }
