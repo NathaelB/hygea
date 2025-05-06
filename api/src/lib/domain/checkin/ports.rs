@@ -9,6 +9,7 @@ pub trait CheckinRepository: Send + Sync {
     fn create(
         &self,
         checkin: CheckIn,
+        symptoms: Vec<String>,
     ) -> impl Future<Output = Result<CheckIn, CheckinError>> + Send;
     fn find_by_id(
         &self,

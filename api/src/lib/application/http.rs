@@ -5,15 +5,20 @@ use axum::{
         header::{ACCEPT, AUTHORIZATION, CONTENT_LENGTH, CONTENT_TYPE, LOCATION},
     },
 };
+use checkin::router::checkin_routes;
 use snafu::ResultExt;
 use tower_http::cors::CorsLayer;
 use tracing::{info, info_span};
 use user::router::user_routes;
+use utoipa::OpenApi;
+use utoipa_swagger_ui::SwaggerUi;
 
 pub mod checkin;
 pub mod user;
 
 use crate::application::state::AppState;
+
+use super::openapi::ApiDoc;
 
 pub struct HttpServerConfig {
     port: String,
@@ -67,7 +72,9 @@ impl HttpServer {
             .allow_credentials(true);
 
         let router = Router::new()
+            .merge(SwaggerUi::new("/swagger-ui").url("/api-doc/openapi.json", ApiDoc::openapi()))
             .merge(user_routes())
+            .merge(checkin_routes())
             .layer(trace_layer)
             .layer(cors)
             .with_state(app_state);

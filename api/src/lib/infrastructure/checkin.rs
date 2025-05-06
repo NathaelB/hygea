@@ -52,7 +52,11 @@ impl PostgresCheckinRepository {
 }
 
 impl CheckinRepository for PostgresCheckinRepository {
-    async fn create(&self, checkin: CheckIn) -> Result<CheckIn, CheckinError> {
+    async fn create(
+        &self,
+        checkin: CheckIn,
+        symptoms: Vec<String>,
+    ) -> Result<CheckIn, CheckinError> {
         let new_checkin = ActiveModel {
             id: Set(checkin.id),
             user_id: Set(checkin.user_id),
@@ -69,18 +73,22 @@ impl CheckinRepository for PostgresCheckinRepository {
             .await
             .map_err(|_| CheckinError::CreateError)?;
 
-        for symptom in checkin.symptoms {
-            let t = Symptom::new(insert_result.last_insert_id, symptom.label);
+        let mut li = Vec::new();
+
+        for symptom in symptoms {
+            let t = Symptom::new(insert_result.last_insert_id, symptom);
             let new_symptom = entity::symptom::ActiveModel {
-                checkin_id: Set(t.checkin_id),
-                id: Set(t.id),
-                label: Set(t.label),
+                checkin_id: Set(t.checkin_id.clone()),
+                id: Set(t.id.clone()),
+                label: Set(t.label.clone()),
             };
 
             let _ = entity::symptom::Entity::insert(new_symptom)
                 .exec(&self.db)
                 .await
                 .map_err(|_| CheckinError::CreateError)?;
+
+            li.push(t);
         }
         todo!("Implement create method");
     }

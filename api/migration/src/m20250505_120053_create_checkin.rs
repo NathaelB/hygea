@@ -1,4 +1,4 @@
-use sea_orm_migration::{prelude::*, schema::*};
+use sea_orm_migration::prelude::*;
 
 use crate::m20250502_230938_create_user_table::User;
 
@@ -76,7 +76,6 @@ enum Checkin {
     Date,
     Mood,
     EnergyLevel,
-    Symptoms,
     Note,
     CreatedAt,
     UpdatedAt,

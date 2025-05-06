@@ -6,7 +6,7 @@ use hygea::{
         http::{HttpServer, HttpServerConfig},
         state::{AppServer, AppState},
     },
-    domain::user::services::DefaultUserService,
+    domain::{checkin::services::DefaultCheckinService, user::services::DefaultUserService},
     env::{AppEnv, Env},
 };
 use snafu::Whatever;
@@ -40,8 +40,9 @@ async fn main() -> Result<(), Whatever> {
     let app_server = AppServer::new(env.clone()).await?;
 
     let user_service = DefaultUserService::new(app_server.user_repository.clone());
+    let checkin_service = DefaultCheckinService::new(app_server.checkin_repository.clone());
 
-    let app_state = AppState::new(user_service);
+    let app_state = AppState::new(user_service, checkin_service);
 
     let server_config = HttpServerConfig::new(env.port.clone());
     let http_server = HttpServer::new(server_config, app_state).await?;
