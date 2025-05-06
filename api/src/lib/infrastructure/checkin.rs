@@ -86,44 +86,63 @@ impl CheckinRepository for PostgresCheckinRepository {
     }
 
     async fn find_by_id(&self, id: uuid::Uuid) -> Result<Option<CheckIn>, CheckinError> {
-        // Find the checkin by its ID
-        let checkin_model: entity::checkin::Model = match CheckinEntity::find()
-            .filter(entity::checkin::Column::Id.eq(id))
-            .one(&self.db)
-            .await
-            .map_err(|e| {
-                error!("Database error when finding checkin by ID: {}", e);
-                CheckinError::NotFound
-            })? {
-            Some(model) => model,
-            None => return Ok(None),
-        };
-
-        // Convert the checkin model to CheckIn entity
-        let checkin = CheckIn::from(checkin_model.clone());
+        let checkin_model =
+            match CheckinEntity::find_by_id(id)
+                .one(&self.db)
+                .await
+                .map_err(|e| {
+                    error!("Database error when finding checkin by ID {}: {}", id, e);
+                    CheckinError::NotFound
+                })? {
+                Some(model) => model,
+                None => return Ok(None),
+            };
 
         let symptoms = checkin_model
             .find_related(SymptomEntity)
             .all(&self.db)
             .await
             .map_err(|e| {
-                error!("Database error when finding related symptoms: {}", e);
+                error!(
+                    "Database error when finding symptoms for checkin {}: {}",
+                    id, e
+                );
                 CheckinError::NotFound
             })?
             .into_iter()
-            .map(|model| Symptom::from(model))
-            .collect::<Vec<Symptom>>();
+            .map(Symptom::from)
+            .collect();
 
-        // Return the checkin with its symptoms
-        let checkin_with_symptoms = CheckIn {
-            symptoms,
-            ..checkin
-        };
+        // Create CheckIn entity with symptoms included
+        let mut checkin = CheckIn::from(checkin_model);
+        checkin.symptoms = symptoms;
 
-        Ok(Some(checkin_with_symptoms))
+        Ok(Some(checkin))
     }
 
     async fn find_by_user_id(&self, user_id: uuid::Uuid) -> Result<Vec<CheckIn>, CheckinError> {
-        todo!("Implement find_by_user_id method");
+        let checkins = CheckinEntity::find()
+            .filter(entity::checkin::Column::UserId.eq(user_id))
+            .all(&self.db)
+            .await
+            .map_err(|_| CheckinError::NotFound)?;
+
+        let mut result = Vec::new();
+        for checkin_model in checkins {
+            let symptoms = checkin_model
+                .find_related(SymptomEntity)
+                .all(&self.db)
+                .await
+                .map_err(|_| CheckinError::NotFound)?
+                .into_iter()
+                .map(Symptom::from)
+                .collect();
+
+            let mut checkin = CheckIn::from(checkin_model);
+            checkin.symptoms = symptoms;
+            result.push(checkin);
+        }
+
+        Ok(result)
     }
 }
